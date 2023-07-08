@@ -20,14 +20,20 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Get commit hash
+        id: commit_hash
+        run: echo "COMMIT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
       - name: Build APK
-        run: |
-          flutter build apk --release
+        run: flutter build apk --release
+
       - name: Rename APK artifact
         run: |
-          mv build/app/outputs/flutter-apk/app-release.apk "app.apk"
+          commit_hash=$COMMIT_HASH
+          mv build/app/outputs/flutter-apk/app-release.apk "app_${commit_hash}.apk"
+
       - name: Upload APK artifact
         uses: actions/upload-artifact@v2
         with:
           name: release-apk
-          path: "app.apk"
+          path: "app_${commit_hash}.apk"
