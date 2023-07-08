@@ -24,16 +24,21 @@ jobs:
         id: commit_hash
         run: echo "COMMIT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
+      - name: Generate timestamp
+        id: timestamp
+        run: echo "TIMESTAMP=$(date +%d-%m-%Y)" >> $GITHUB_ENV
+
       - name: Build APK
         run: flutter build apk --release
 
       - name: Rename APK artifact
         run: |
           commit_hash=$COMMIT_HASH
-          mv build/app/outputs/flutter-apk/app-release.apk "app_${commit_hash}.apk"
+          timestamp=$TIMESTAMP
+          mv build/app/outputs/flutter-apk/app-release.apk "app_${commit_hash}_${timestamp}.apk"
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v2
         with:
           name: release-apk
-          path: "app_${{ env.COMMIT_HASH }}.apk"
+          path: "app_${{ env.COMMIT_HASH }}_${{ env.TIMESTAMP }}.apk"
