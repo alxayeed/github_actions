@@ -1,4 +1,5 @@
 name: Build APK
+
 on:
   push:
     branches:
@@ -22,9 +23,11 @@ jobs:
       - name: Build APK
         run: |
           flutter build apk --release
-
+      - name: Rename APK artifact
+        run: |
+          mv build/app/outputs/flutter-apk/app-release.apk "app.apk"
       - name: Upload APK artifact
         uses: actions/upload-artifact@v2
         with:
           name: release-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: "app.apk"
